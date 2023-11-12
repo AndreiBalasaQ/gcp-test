@@ -21,7 +21,7 @@ steps:
     '--platform', 'managed', 
     '--region', 'us-central1', 
     '--allow-unauthenticated',
-    '--set-env-vars', 'SERVICE_NAME=$$SECRET_SERVICENAME'
+    '--set-env-vars', 'SERVICE_NAME=$$SECRET_SERVICENAME',
      '-c',
     'echo "Secret Value: $SECRET_SERVICENAME"'
   ]

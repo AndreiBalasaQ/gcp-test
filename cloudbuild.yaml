@@ -32,5 +32,5 @@ images:
 
 availableSecrets:
   secretManager:
-  - versionName: projects/YOUR_PROJECT_ID/secrets/SERVICENAME/versions/latest
+  - versionName: projects/1026963246587/secrets/SERVICENAME/versions/latest
     env: 'SECRET_SERVICENAME'

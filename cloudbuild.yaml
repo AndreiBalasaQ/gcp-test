@@ -17,13 +17,12 @@ steps:
   secretEnv: ['SECRET_SERVICENAME']
   args: [
     '-c',
-    'echo "Secret Value: $SECRET_SERVICENAME"',
+    'echo "Secret Value: $$SECRET_SERVICENAME"',
     'run', 'deploy', 'gcp-test', 
     '--image', 'gcr.io/$PROJECT_ID/gcp-test', 
     '--platform', 'managed', 
     '--region', 'us-central1', 
-    '--allow-unauthenticated',
-    '--set-env-vars', 'SERVICE_NAME=$$SECRET_SERVICENAME' 
+    '--allow-unauthenticated'
   ]
 
 

@@ -1,26 +1,42 @@
 steps:
-# Step 1: Build the application using Maven
+# Step 1: Fetch the secret from Secret Manager
+- name: 'gcr.io/cloud-builders/gcloud'
+  entrypoint: 'bash'
+  args:
+    - '-c'
+    - |
+      export _SERVICENAME=$(gcloud secrets versions access latest --secret=SERVICENAME)
+      echo "export _SERVICENAME=$_SERVICENAME" >> /workspace/env_vars
+
+# Step 2: Build the application using Maven
 - name: 'maven:3.8.4-openjdk-17'
   entrypoint: 'bash'
   args: ['-c', 'mvn clean package -DskipTests']
 
-# Step 2: Build the Docker image
+# Step 3: Build the Docker image
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'gcr.io/$PROJECT_ID/${_SERVICENAME}', '.']
+  args: ['build', '-t', 'gcr.io/$PROJECT_ID/$_SERVICENAME', '.']
 
-# Step 3: Push the Docker image to Google Container Registry
+# Step 4: Push the Docker image to Google Container Registry
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['push', 'gcr.io/$PROJECT_ID/${_SERVICENAME}']
+  args: ['push', 'gcr.io/$PROJECT_ID/$_SERVICENAME']
 
-# Step 4: Deploy the application to Cloud Run
+# Step 5: Deploy the application to Cloud Run using the secret service name
 - name: 'gcr.io/cloud-builders/gcloud'
-  args: ['run', 'deploy', '${_SERVICENAME}', '--image', 'gcr.io/$PROJECT_ID/${_SERVICENAME}', '--platform', 'managed', '--region', 'us-central1', '--allow-unauthenticated']
+  args:
+    - 'run'
+    - 'deploy'
+    - '$_SERVICENAME'  # Use the secret as the service name
+    - '--image'
+    - 'gcr.io/$PROJECT_ID/$_SERVICENAME'
+    - '--platform'
+    - 'managed'
+    - '--region'
+    - 'us-central1'
+    - '--allow-unauthenticated'
+  env:
+    - 'CLOUDSDK_COMPUTE_ZONE=us-central1'
+    - 'CLOUDSDK_CONTAINER_CLUSTER=your-cluster-name'
 
 images:
-- 'gcr.io/$PROJECT_ID/${_SERVICENAME}'
-
-
-availableSecrets:
-  secretManager:
-  - versionName: projects/1026963246587/secrets/SERVICENAME
-    env: 'SERVICENAME'
+- 'gcr.io/$PROJECT_ID/$_SERVICENAME'

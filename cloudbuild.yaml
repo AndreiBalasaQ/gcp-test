@@ -20,7 +20,7 @@ steps:
     '--image', 'gcr.io/$PROJECT_ID/gcp-test', 
     '--platform', 'managed', 
     '--region', 'us-central1', 
-    '--allow-unauthenticated'
+    '--allow-unauthenticated',
     '-c', 'echo $$SECRET_SERVICENAME
   ]
 

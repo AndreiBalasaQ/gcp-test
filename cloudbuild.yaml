@@ -10,16 +10,20 @@ steps:
 
 # Step 3: Push the Docker image to Google Container Registry
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['push', 'gcr.io/$PROJECT_ID/$_SERVICENAME']
+  args: ['push', 'gcr.io/$PROJECT_ID/$$SECRET_SERVICENAME']
 
 # Step 4: Deploy the application to Cloud Run
 - name: 'gcr.io/cloud-builders/gcloud'
   args: ['run', 'deploy', 'gcp-test', '--image', 'gcr.io/$PROJECT_ID/gcp-test', '--platform', 'managed', '--region', 'us-central1', '--allow-unauthenticated']
 
+secretEnv: [
+    'SECRET_SERVICENAME'
+  ]
+  
 images:
 - 'gcr.io/$PROJECT_ID/gcp-test'
 
 availableSecrets:
   secretManager:
-  - versionName: projects/1026963246587/secrets/SERVICENAME
-    env: '_SERVICENAME'
+  - versionName: projects/1026963246587/secrets/SERVICENAME/versions/latest
+    env: 'SECRET_SERVICENAME'

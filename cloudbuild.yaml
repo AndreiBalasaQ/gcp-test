@@ -23,6 +23,10 @@ steps:
     '--set-env-vars', 'SERVICE_NAME=$$SECRET_SERVICENAME'
   ]
 
+secretEnv: [
+    'SECRET_SERVICENAME'
+  ]
+
 images:
 - 'gcr.io/$PROJECT_ID/gcp-test'
 

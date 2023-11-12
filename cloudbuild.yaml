@@ -12,25 +12,25 @@ steps:
 - name: 'gcr.io/cloud-builders/docker'
   args: ['push', 'gcr.io/$PROJECT_ID/gcp-test']
 
-# Step 4: Fetch and log the secret value
+# Step 4: Deploy the application to Cloud Run
 - name: 'gcr.io/cloud-builders/gcloud'
-  entrypoint: 'bash'
-  args:
-    - '-c'
-    - |
-      export SECRET_SERVICENAME=$(gcloud secrets versions access latest --secret=SERVICENAME)
-      echo "Secret Value: $SECRET_SERVICENAME"
-
-# Step 5: Deploy the application to Cloud Run
-- name: 'gcr.io/cloud-builders/gcloud'
+  secretEnv: ['SECRET_SERVICENAME']
   args: [
     'run', 'deploy', 'gcp-test', 
     '--image', 'gcr.io/$PROJECT_ID/gcp-test', 
     '--platform', 'managed', 
     '--region', 'us-central1', 
     '--allow-unauthenticated',
-    '--set-env-vars', 'SERVICE_NAME=$SECRET_SERVICENAME'
+    '--set-env-vars', 'SERVICE_NAME=$$SECRET_SERVICENAME'
+     '-c',
+    'echo "Secret Value: $SECRET_SERVICENAME"'
   ]
+
 
 images:
 - 'gcr.io/$PROJECT_ID/gcp-test'
+
+availableSecrets:
+  secretManager:
+  - versionName: projects/1026963246587/secrets/SERVICENAME/versions/latest
+    env: 'SECRET_SERVICENAME'

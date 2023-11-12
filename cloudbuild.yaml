@@ -10,7 +10,7 @@ steps:
 
 # Step 3: Push the Docker image to Google Container Registry
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['push', 'gcr.io/$PROJECT_ID/${_SERVICENAME}']
+  args: ['push', 'gcr.io/$PROJECT_ID/${SERVICENAME}']
 
 # Step 4: Deploy the application to Cloud Run
 - name: 'gcr.io/cloud-builders/gcloud'

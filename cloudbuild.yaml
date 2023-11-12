@@ -12,16 +12,20 @@ steps:
 - name: 'gcr.io/cloud-builders/docker'
   args: ['push', 'gcr.io/$PROJECT_ID/gcp-test']
 
-# Step 4: Deploy the application to Cloud Run
+# Step 3.5: Echo the value of the secret (replace with your actual secret variable)
 - name: 'gcr.io/cloud-builders/gcloud'
   secretEnv: ['SECRET_SERVICENAME']
+  entrypoint: 'bash'
+  args: ['-c', 'echo $$SECRET_SERVICENAME']
+
+# Step 4: Deploy the application to Cloud Run
+- name: 'gcr.io/cloud-builders/gcloud'
   args: [
     'run', 'deploy', 'gcp-test', 
     '--image', 'gcr.io/$PROJECT_ID/gcp-test', 
     '--platform', 'managed', 
     '--region', 'us-central1', 
-    '--allow-unauthenticated',
-    '-c', 'echo $$SECRET_SERVICENAME'
+    '--allow-unauthenticated'
   ]
 
 

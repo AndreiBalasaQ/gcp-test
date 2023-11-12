@@ -10,8 +10,15 @@ steps:
 
 # Step 3: Push the Docker image to Google Container Registry
 - name: 'gcr.io/cloud-builders/docker'
-  secretEnv: ['SECRET_SERVICENAME']
-  args: ['push', 'gcr.io/$PROJECT_ID/$$SECRET_SERVICENAME']
+  args: ['push', 'gcr.io/$PROJECT_ID/gcp-test']
+
+# Step to log the secret value
+- name: 'gcr.io/cloud-builders/gcloud'
+  entrypoint: 'bash'
+  args: [
+    '-c',
+    'echo "Secret Value: $SECRET_SERVICENAME"'
+  ]
 
 # Step 4: Deploy the application to Cloud Run
 - name: 'gcr.io/cloud-builders/gcloud'
@@ -23,6 +30,9 @@ steps:
     '--allow-unauthenticated',
     '--set-env-vars', 'SERVICE_NAME=$$SECRET_SERVICENAME'
   ]
+
+secretEnv:
+  - 'SECRET_SERVICENAME'
 
 images:
 - 'gcr.io/$PROJECT_ID/gcp-test'
